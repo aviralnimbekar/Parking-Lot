@@ -16,55 +16,73 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    void givenAVehicle_WhenParked_ShouldReturnTrue() {
-        boolean isParked = parkingLotSystem.park(vehicle);
+    void givenAVehicle_WhenParked_ShouldReturnTrue() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        boolean isParked = parkingLotSystem.isParked(vehicle);
         Assertions.assertTrue(isParked);
     }
 
     @Test
-    void givenAVehicle_WhenAlreadyParked_ShouldReturnFalse() {
+    void givenAVehicle_WhenAlreadyParked_ShouldReturnAlreadyParkedMessage() throws ParkingLotException {
         parkingLotSystem.park(vehicle);
-        boolean isParked = parkingLotSystem.park(vehicle);
-        Assertions.assertFalse(isParked);
-    }
-
-    @Test
-    void givenAVehicle_WhenParkedAnotherVehicle_ShouldReturnFalse() {
-        Object anOtherVehicle = new Object();
-        parkingLotSystem.park(vehicle);
-        boolean isParked = parkingLotSystem.park(anOtherVehicle);
-        Assertions.assertFalse(isParked);
-    }
-
-    @Test
-    void givenAVehicle_WhenUnParked_ShouldReturnTrue() throws ParkingLotException {
-        parkingLotSystem.park(vehicle);
-        boolean isUnParked = parkingLotSystem.unPark(vehicle);
-        Assertions.assertTrue(isUnParked);
-    }
-
-    @Test
-    void givenAVehicle_WhenNotUnParked_ShouldReturnFalse() throws ParkingLotException {
-        parkingLotSystem.park(vehicle);
-        boolean isUnParked = parkingLotSystem.unPark(null);
-        Assertions.assertFalse(isUnParked);
-    }
-
-    @Test
-    void givenNoVehicle_WhenNotUnParked_ShouldReturnFalse() {
         try {
-            parkingLotSystem.unPark(vehicle);
+            parkingLotSystem.park(vehicle);
         } catch (ParkingLotException e) {
-            Assertions.assertEquals("No Vehicle Parked to Unpark", e.getMessage());
+            Assertions.assertEquals(ExceptionType.ALREADY_PARKED, e.type);
             System.out.println(e.getMessage());
         }
     }
 
     @Test
-    void givenAVehicle_WhenUnparkAnotherVehicle_ShouReturnFalse() throws ParkingLotException {
+    void givenAVehicle_WhenParkedAnotherVehicle_ShouldReturnLotFullMessage() throws ParkingLotException {
         Object anOtherVehicle = new Object();
         parkingLotSystem.park(vehicle);
-        boolean isUnParked = parkingLotSystem.unPark(anOtherVehicle);
-        Assertions.assertFalse(isUnParked);
+        try {
+            parkingLotSystem.park(anOtherVehicle);
+        } catch (ParkingLotException e) {
+            Assertions.assertEquals(ExceptionType.LOT_FULL, e.type);
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    void givenAVehicle_WhenUnParked_ShouldReturnTrue() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.unPark(vehicle);
+        boolean isUnParked = parkingLotSystem.isUnParked();
+        Assertions.assertTrue(isUnParked);
+    }
+
+    @Test
+    void givenAVehicle_WhenNotUnParked_ShouldReturnUnparkingFailMessage() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        try {
+            parkingLotSystem.unPark(null);
+        } catch (ParkingLotException e) {
+            Assertions.assertEquals(ExceptionType.NOT_UNPARKED, e.type);
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    void givenNoVehicle_WhenNotUnParked_ShouldReturnNoVehicleAvailableMessage() {
+        try {
+            parkingLotSystem.unPark(vehicle);
+        } catch (ParkingLotException e) {
+            Assertions.assertEquals(ExceptionType.NO_VEHICLE, e.type);
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    void givenAVehicle_WhenUnparkAnotherVehicle_ShouReturnDiffVehicleMessage() throws ParkingLotException {
+        Object anOtherVehicle = new Object();
+        parkingLotSystem.park(vehicle);
+        try {
+            parkingLotSystem.unPark(anOtherVehicle);
+        } catch (ParkingLotException e) {
+            Assertions.assertEquals(ExceptionType.DIFF_VEHICLE, e.type);
+            System.out.println(e.getMessage());
+        }
     }
 }
