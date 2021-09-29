@@ -85,4 +85,17 @@ public class ParkingLotSystemTest {
             System.out.println(e.getMessage());
         }
     }
+
+    @Test
+    void givenAQuery_WhenParkingLotIsFull_ShouldReturnTrue() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        boolean isFull = parkingLotSystem.isLotFull();
+        Assertions.assertTrue(isFull);
+    }
+
+    @Test
+    void givenAQuery_WhenParkingLotIsNotFull_ShouldReturnFalse() {
+        boolean isFull = parkingLotSystem.isLotFull();
+        Assertions.assertFalse(isFull);
+    }
 }

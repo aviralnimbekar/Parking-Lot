@@ -31,4 +31,8 @@ public class ParkingLotSystem {
     public boolean isUnParked() {
         return this.vehicle == null;
     }
+
+    public boolean isLotFull() {
+        return this.vehicle != null;
+    }
 }
