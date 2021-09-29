@@ -12,10 +12,14 @@ public class ParkingLotSystem {
         return false;
     }
 
-    public boolean unPark(Object vehicle) {
-        if (this.vehicle.equals(vehicle)){
-            this.vehicle = null;
-            return true;
+    public boolean unPark(Object vehicle) throws ParkingLotException {
+        try {
+            if (this.vehicle.equals(vehicle)) {
+                this.vehicle = null;
+                return true;
+            }
+        } catch (NullPointerException e) {
+            throw new ParkingLotException("No Vehicle Parked to Unpark");
         }
         return false;
     }
