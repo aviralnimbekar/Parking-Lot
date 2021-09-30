@@ -3,6 +3,11 @@ package com.parkingLot;
 public class ParkingLotSystem {
 
     private Object vehicle;
+    private final SecurityPerson securityPerson;
+
+    public ParkingLotSystem(SecurityPerson securityPerson) {
+        this.securityPerson = securityPerson;
+    }
 
     public void park(Object vehicle) throws ParkingLotException {
         if (this.vehicle == null)
@@ -13,7 +18,7 @@ public class ParkingLotSystem {
             throw new ParkingLotException(ExceptionType.LOT_FULL, "Lot is already full");
     }
 
-    public boolean isParked(Object vehicle) {
+    public boolean isVehicleParked(Object vehicle) {
         return this.vehicle.equals(vehicle);
     }
 
@@ -28,11 +33,16 @@ public class ParkingLotSystem {
             this.vehicle = null;
     }
 
-    public boolean isUnParked() {
+    public boolean isVehicleUnParked() {
         return this.vehicle == null;
     }
 
     public boolean isLotFull() {
         return this.vehicle != null;
+    }
+
+    public void informSecPer(Object vehicle) {
+        if (isLotFull())
+            securityPerson.isLotFull(vehicle);
     }
 }

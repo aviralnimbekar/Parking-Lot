@@ -12,13 +12,13 @@ public class ParkingLotSystemTest {
     @BeforeEach
     void setUp() {
         vehicle = new Object();
-        parkingLotSystem = new ParkingLotSystem();
+        parkingLotSystem = new ParkingLotSystem(new SecurityPerson());
     }
 
     @Test
     void givenAVehicle_WhenParked_ShouldReturnTrue() throws ParkingLotException {
         parkingLotSystem.park(vehicle);
-        boolean isParked = parkingLotSystem.isParked(vehicle);
+        boolean isParked = parkingLotSystem.isVehicleParked(vehicle);
         Assertions.assertTrue(isParked);
     }
 
@@ -49,7 +49,7 @@ public class ParkingLotSystemTest {
     void givenAVehicle_WhenUnParked_ShouldReturnTrue() throws ParkingLotException {
         parkingLotSystem.park(vehicle);
         parkingLotSystem.unPark(vehicle);
-        boolean isUnParked = parkingLotSystem.isUnParked();
+        boolean isUnParked = parkingLotSystem.isVehicleUnParked();
         Assertions.assertTrue(isUnParked);
     }
 
@@ -96,6 +96,24 @@ public class ParkingLotSystemTest {
     @Test
     void givenAQuery_WhenParkingLotIsNotFull_ShouldReturnFalse() {
         boolean isFull = parkingLotSystem.isLotFull();
+        Assertions.assertFalse(isFull);
+    }
+
+    @Test
+    void givenAQuery_WhenParkingLotIsFull_ShouldInformSecurityPerson() throws ParkingLotException {
+        SecurityPerson securityPerson = new SecurityPerson();
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.informSecPer(vehicle);
+        boolean isFull = securityPerson.isLotFull(vehicle);
+        Assertions.assertTrue(isFull);
+    }
+
+    @Test
+    void givenAQuery_WhenParkingLotIsNotFull_ShouldInformSecurityPerson() {
+        vehicle = null;
+        SecurityPerson securityPerson = new SecurityPerson();
+        parkingLotSystem.informSecPer(vehicle);
+        boolean isFull = securityPerson.isLotFull(vehicle);
         Assertions.assertFalse(isFull);
     }
 }
