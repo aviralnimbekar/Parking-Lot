@@ -1,6 +1,6 @@
 package com.parkingLot;
 
-public class AirPostSecurity implements ParkingLotObservers{
+public class AirPostSecurity implements ParkingLotObservers {
     private boolean isLotFull;
 
     public boolean isLotFull() {
@@ -10,5 +10,10 @@ public class AirPostSecurity implements ParkingLotObservers{
     @Override
     public void capacityIsFull() {
         isLotFull = true;
+    }
+
+    @Override
+    public void spaceIsAvailable() {
+        isLotFull = false;
     }
 }

@@ -31,7 +31,7 @@ public class ParkingLotSystem {
             throw new ParkingLotException(ExceptionType.LOT_FULL, "Lot is already full");
         this.vehicles.add(vehicle);
         if (this.vehicles.size() == this.actualCapacity)
-           observers.forEach(ParkingLotObservers::capacityIsFull);
+            observers.forEach(ParkingLotObservers::capacityIsFull);
     }
 
     public boolean isVehicleParked(Object vehicle) {
@@ -46,6 +46,8 @@ public class ParkingLotSystem {
         if (!this.vehicles.contains(vehicle))
             throw new ParkingLotException(ExceptionType.DIFF_VEHICLE, "This is not your Vehicle");
         this.vehicles.remove(vehicle);
+        observers.forEach(ParkingLotObservers::spaceIsAvailable);
+
     }
 
     public boolean isVehicleUnParked(Object vehicle) {

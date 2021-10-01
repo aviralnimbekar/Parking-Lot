@@ -127,7 +127,7 @@ public class ParkingLotSystemTest {
 
     @Test
     void givenWhenParkingLotIsFull_ShouldInformSecurity() throws ParkingLotException {
-    AirPostSecurity airPostSecurity = new AirPostSecurity();
+        AirPostSecurity airPostSecurity = new AirPostSecurity();
         parkingLotSystem.registerObservers(airPostSecurity);
         parkingLotSystem.park(vehicle);
         boolean isFull = airPostSecurity.isLotFull();
@@ -139,6 +139,16 @@ public class ParkingLotSystemTest {
         AirPostSecurity airPostSecurity = new AirPostSecurity();
         parkingLotSystem.registerObservers(airPostSecurity);
         boolean isFull = airPostSecurity.isLotFull();
+        Assertions.assertFalse(isFull);
+    }
+
+    @Test
+    void givenWhenParkingLotHasSpace_ShouldInformTheOwner() throws ParkingLotException {
+        ParkingLotOwner owner = new ParkingLotOwner();
+        parkingLotSystem.registerObservers(owner);
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.unPark(vehicle);
+        boolean isFull = owner.isLotFull();
         Assertions.assertFalse(isFull);
     }
 }
