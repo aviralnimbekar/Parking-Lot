@@ -2,11 +2,14 @@ package com.parkingLot;
 
 public class ParkingLotSystem {
 
+    private final int actualCapacity;
+    private int currentCapacity;
     private Object vehicle;
-    private final SecurityPerson securityPerson;
+    private ParkingLotOwner owner;
 
-    public ParkingLotSystem(SecurityPerson securityPerson) {
-        this.securityPerson = securityPerson;
+    public ParkingLotSystem(int capacity) {
+        this.currentCapacity = 0;
+        this.actualCapacity = capacity;
     }
 
     public void park(Object vehicle) throws ParkingLotException {
@@ -16,6 +19,9 @@ public class ParkingLotSystem {
             throw new ParkingLotException(ExceptionType.ALREADY_PARKED, "Vehicle is already Parked");
         else
             throw new ParkingLotException(ExceptionType.LOT_FULL, "Lot is already full");
+        currentCapacity++;
+        if (this.currentCapacity == this.actualCapacity)
+            owner.capacityIsFull();
     }
 
     public boolean isVehicleParked(Object vehicle) {
@@ -37,12 +43,7 @@ public class ParkingLotSystem {
         return this.vehicle == null;
     }
 
-    public boolean isLotFull() {
-        return this.vehicle != null;
-    }
-
-    public void informSecPer(Object vehicle) {
-        if (isLotFull())
-            securityPerson.isLotFull(vehicle);
+    public void registerOwner(ParkingLotOwner owner) {
+        this.owner = owner;
     }
 }

@@ -8,11 +8,13 @@ public class ParkingLotSystemTest {
 
     Object vehicle;
     ParkingLotSystem parkingLotSystem;
-
+    ParkingLotOwner owner;
     @BeforeEach
     void setUp() {
         vehicle = new Object();
-        parkingLotSystem = new ParkingLotSystem(new SecurityPerson());
+        parkingLotSystem = new ParkingLotSystem(1);
+        owner = new ParkingLotOwner();
+        parkingLotSystem.registerOwner(owner);
     }
 
     @Test
@@ -87,33 +89,22 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    void givenAQuery_WhenParkingLotIsFull_ShouldReturnTrue() throws ParkingLotException {
-        parkingLotSystem.park(vehicle);
-        boolean isFull = parkingLotSystem.isLotFull();
-        Assertions.assertTrue(isFull);
+    void givenWhenParkingLotIsFull_ShouldInformTheOwner() {
+        ParkingLotOwner owner = new ParkingLotOwner();
+        parkingLotSystem.registerOwner(owner);
+        try {
+            parkingLotSystem.park(vehicle);
+        } catch (ParkingLotException e) {
+            boolean isFull = owner.isLotFull();
+            Assertions.assertTrue(isFull);
+        }
     }
 
     @Test
-    void givenAQuery_WhenParkingLotIsNotFull_ShouldReturnFalse() {
-        boolean isFull = parkingLotSystem.isLotFull();
-        Assertions.assertFalse(isFull);
-    }
-
-    @Test
-    void givenAQuery_WhenParkingLotIsFull_ShouldInformSecurityPerson() throws ParkingLotException {
-        SecurityPerson securityPerson = new SecurityPerson();
-        parkingLotSystem.park(vehicle);
-        parkingLotSystem.informSecPer(vehicle);
-        boolean isFull = securityPerson.isLotFull(vehicle);
-        Assertions.assertTrue(isFull);
-    }
-
-    @Test
-    void givenAQuery_WhenParkingLotIsNotFull_ShouldInformSecurityPerson() {
-        vehicle = null;
-        SecurityPerson securityPerson = new SecurityPerson();
-        parkingLotSystem.informSecPer(vehicle);
-        boolean isFull = securityPerson.isLotFull(vehicle);
+    void givenWhenParkingLotIsNotFull_ShouldInformOwner() {
+        ParkingLotOwner owner = new ParkingLotOwner();
+        parkingLotSystem.registerOwner(owner);
+        boolean isFull = owner.isLotFull();
         Assertions.assertFalse(isFull);
     }
 }
