@@ -1,21 +1,23 @@
 package com.parkingLot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ParkingLotSystem {
 
     private final List<Object> vehicles;
+    private final List<ParkingLotObservers> observers;
     private int actualCapacity;
-    private ParkingLotOwner owner;
 
     public ParkingLotSystem(int capacity) {
         this.vehicles = new LinkedList<>();
+        this.observers = new ArrayList<>();
         this.actualCapacity = capacity;
     }
 
-    public void registerOwner(ParkingLotOwner owner) {
-        this.owner = owner;
+    public void registerObservers(ParkingLotObservers observer) {
+        this.observers.add(observer);
     }
 
     public void setCapacity(int capacity) {
@@ -23,13 +25,13 @@ public class ParkingLotSystem {
     }
 
     public void park(Object vehicle) throws ParkingLotException {
-        if (this.vehicles.contains(vehicle))
+        if (isVehicleParked(vehicle))
             throw new ParkingLotException(ExceptionType.ALREADY_PARKED, "Vehicle is already Parked");
-        else if (this.vehicles.size() == this.actualCapacity)
+        if (this.vehicles.size() == this.actualCapacity)
             throw new ParkingLotException(ExceptionType.LOT_FULL, "Lot is already full");
         this.vehicles.add(vehicle);
         if (this.vehicles.size() == this.actualCapacity)
-            owner.capacityIsFull();
+           observers.forEach(ParkingLotObservers::capacityIsFull);
     }
 
     public boolean isVehicleParked(Object vehicle) {

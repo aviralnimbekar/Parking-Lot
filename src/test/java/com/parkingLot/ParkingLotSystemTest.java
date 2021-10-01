@@ -8,14 +8,11 @@ public class ParkingLotSystemTest {
 
     Object vehicle;
     ParkingLotSystem parkingLotSystem;
-    ParkingLotOwner owner;
 
     @BeforeEach
     void setUp() {
         vehicle = new Object();
         parkingLotSystem = new ParkingLotSystem(1);
-        owner = new ParkingLotOwner();
-        parkingLotSystem.registerOwner(owner);
     }
 
     @Test
@@ -90,6 +87,8 @@ public class ParkingLotSystemTest {
 
     @Test
     void givenWhenParkingLotIsFull_ShouldInformTheOwner() throws ParkingLotException {
+        ParkingLotOwner owner = new ParkingLotOwner();
+        parkingLotSystem.registerObservers(owner);
         parkingLotSystem.park(vehicle);
         boolean isFull = owner.isLotFull();
         Assertions.assertTrue(isFull);
@@ -98,6 +97,8 @@ public class ParkingLotSystemTest {
     @Test
     void givenWhenParkingLotIsFullWhenCapacityIs2_ShouldInformTheOwner() throws ParkingLotException {
         Object vehicle2 = new Object();
+        ParkingLotOwner owner = new ParkingLotOwner();
+        parkingLotSystem.registerObservers(owner);
         parkingLotSystem.setCapacity(2);
         parkingLotSystem.park(vehicle);
         parkingLotSystem.park(vehicle2);
@@ -107,6 +108,8 @@ public class ParkingLotSystemTest {
 
     @Test
     void givenWhenParkingLotIsNotFull_ShouldInformOwner() {
+        ParkingLotOwner owner = new ParkingLotOwner();
+        parkingLotSystem.registerObservers(owner);
         boolean isFull = owner.isLotFull();
         Assertions.assertFalse(isFull);
     }
@@ -120,5 +123,22 @@ public class ParkingLotSystemTest {
         boolean isParked1 = parkingLotSystem.isVehicleParked(vehicle);
         boolean isParked2 = parkingLotSystem.isVehicleParked(vehicle2);
         Assertions.assertTrue(isParked1 && isParked2);
+    }
+
+    @Test
+    void givenWhenParkingLotIsFull_ShouldInformSecurity() throws ParkingLotException {
+    AirPostSecurity airPostSecurity = new AirPostSecurity();
+        parkingLotSystem.registerObservers(airPostSecurity);
+        parkingLotSystem.park(vehicle);
+        boolean isFull = airPostSecurity.isLotFull();
+        Assertions.assertTrue(isFull);
+    }
+
+    @Test
+    void givenWhenParkingLotIsNotFull_ShouldSecurity() {
+        AirPostSecurity airPostSecurity = new AirPostSecurity();
+        parkingLotSystem.registerObservers(airPostSecurity);
+        boolean isFull = airPostSecurity.isLotFull();
+        Assertions.assertFalse(isFull);
     }
 }
