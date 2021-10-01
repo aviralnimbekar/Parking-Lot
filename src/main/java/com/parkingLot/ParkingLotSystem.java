@@ -1,49 +1,52 @@
 package com.parkingLot;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ParkingLotSystem {
 
-    private final int actualCapacity;
-    private int currentCapacity;
-    private Object vehicle;
+    private final List<Object> vehicles;
+    private int actualCapacity;
     private ParkingLotOwner owner;
 
     public ParkingLotSystem(int capacity) {
-        this.currentCapacity = 0;
+        this.vehicles = new LinkedList<>();
         this.actualCapacity = capacity;
-    }
-
-    public void park(Object vehicle) throws ParkingLotException {
-        if (this.vehicle == null)
-            this.vehicle = vehicle;
-        else if (this.vehicle.equals(vehicle))
-            throw new ParkingLotException(ExceptionType.ALREADY_PARKED, "Vehicle is already Parked");
-        else
-            throw new ParkingLotException(ExceptionType.LOT_FULL, "Lot is already full");
-        currentCapacity++;
-        if (this.currentCapacity == this.actualCapacity)
-            owner.capacityIsFull();
-    }
-
-    public boolean isVehicleParked(Object vehicle) {
-        return this.vehicle.equals(vehicle);
-    }
-
-    public void unPark(Object vehicle) throws ParkingLotException {
-        if (vehicle == null)
-            throw new ParkingLotException(ExceptionType.NOT_UNPARKED, "Vehicle Unparking failed");
-        if (this.vehicle == null)
-            throw new ParkingLotException(ExceptionType.NO_VEHICLE, "No Vehicle Parked to Unpark");
-        if (!this.vehicle.equals(vehicle))
-            throw new ParkingLotException(ExceptionType.DIFF_VEHICLE, "This is not your Vehicle");
-        if (this.vehicle.equals(vehicle))
-            this.vehicle = null;
-    }
-
-    public boolean isVehicleUnParked() {
-        return this.vehicle == null;
     }
 
     public void registerOwner(ParkingLotOwner owner) {
         this.owner = owner;
+    }
+
+    public void setCapacity(int capacity) {
+        this.actualCapacity = capacity;
+    }
+
+    public void park(Object vehicle) throws ParkingLotException {
+        if (this.vehicles.contains(vehicle))
+            throw new ParkingLotException(ExceptionType.ALREADY_PARKED, "Vehicle is already Parked");
+        else if (this.vehicles.size() == this.actualCapacity)
+            throw new ParkingLotException(ExceptionType.LOT_FULL, "Lot is already full");
+        this.vehicles.add(vehicle);
+        if (this.vehicles.size() == this.actualCapacity)
+            owner.capacityIsFull();
+    }
+
+    public boolean isVehicleParked(Object vehicle) {
+        return this.vehicles.contains(vehicle);
+    }
+
+    public void unPark(Object vehicle) throws ParkingLotException {
+        if (vehicle == null)
+            throw new ParkingLotException(ExceptionType.NO_VEHICLE, "Please enter valid Vehicle");
+        if (this.vehicles.size() == 0)
+            throw new ParkingLotException(ExceptionType.NO_VEHICLE, "No Vehicle Parked to Unpark");
+        if (!this.vehicles.contains(vehicle))
+            throw new ParkingLotException(ExceptionType.DIFF_VEHICLE, "This is not your Vehicle");
+        this.vehicles.remove(vehicle);
+    }
+
+    public boolean isVehicleUnParked(Object vehicle) {
+        return !this.vehicles.contains(vehicle);
     }
 }

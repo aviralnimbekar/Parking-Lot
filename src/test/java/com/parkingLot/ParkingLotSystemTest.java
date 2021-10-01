@@ -9,6 +9,7 @@ public class ParkingLotSystemTest {
     Object vehicle;
     ParkingLotSystem parkingLotSystem;
     ParkingLotOwner owner;
+
     @BeforeEach
     void setUp() {
         vehicle = new Object();
@@ -37,10 +38,10 @@ public class ParkingLotSystemTest {
 
     @Test
     void givenAVehicle_WhenParkedAnotherVehicle_ShouldReturnLotFullMessage() throws ParkingLotException {
-        Object anOtherVehicle = new Object();
+        Object vehicle2 = new Object();
         parkingLotSystem.park(vehicle);
         try {
-            parkingLotSystem.park(anOtherVehicle);
+            parkingLotSystem.park(vehicle2);
         } catch (ParkingLotException e) {
             Assertions.assertEquals(ExceptionType.LOT_FULL, e.type);
             System.out.println(e.getMessage());
@@ -51,23 +52,12 @@ public class ParkingLotSystemTest {
     void givenAVehicle_WhenUnParked_ShouldReturnTrue() throws ParkingLotException {
         parkingLotSystem.park(vehicle);
         parkingLotSystem.unPark(vehicle);
-        boolean isUnParked = parkingLotSystem.isVehicleUnParked();
+        boolean isUnParked = parkingLotSystem.isVehicleUnParked(vehicle);
         Assertions.assertTrue(isUnParked);
     }
 
     @Test
-    void givenAVehicle_WhenNotUnParked_ShouldReturnUnparkingFailMessage() throws ParkingLotException {
-        parkingLotSystem.park(vehicle);
-        try {
-            parkingLotSystem.unPark(null);
-        } catch (ParkingLotException e) {
-            Assertions.assertEquals(ExceptionType.NOT_UNPARKED, e.type);
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @Test
-    void givenNoVehicle_WhenNotUnParked_ShouldReturnNoVehicleAvailableMessage() {
+    void givenAVehicle_WhenNotUnParked_ShouldReturnNoVehicleAvailableMessage() {
         try {
             parkingLotSystem.unPark(vehicle);
         } catch (ParkingLotException e) {
@@ -77,11 +67,21 @@ public class ParkingLotSystemTest {
     }
 
     @Test
+    void givenNoVehicle_WhenNotUnParked_ShouldReturnNotValidVehicleMessage() {
+        try {
+            parkingLotSystem.unPark(null);
+        } catch (ParkingLotException e) {
+            Assertions.assertEquals(ExceptionType.NO_VEHICLE, e.type);
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
     void givenAVehicle_WhenUnparkAnotherVehicle_ShouReturnDiffVehicleMessage() throws ParkingLotException {
-        Object anOtherVehicle = new Object();
+        Object vehicle2 = new Object();
         parkingLotSystem.park(vehicle);
         try {
-            parkingLotSystem.unPark(anOtherVehicle);
+            parkingLotSystem.unPark(vehicle2);
         } catch (ParkingLotException e) {
             Assertions.assertEquals(ExceptionType.DIFF_VEHICLE, e.type);
             System.out.println(e.getMessage());
@@ -89,22 +89,36 @@ public class ParkingLotSystemTest {
     }
 
     @Test
-    void givenWhenParkingLotIsFull_ShouldInformTheOwner() {
-        ParkingLotOwner owner = new ParkingLotOwner();
-        parkingLotSystem.registerOwner(owner);
-        try {
-            parkingLotSystem.park(vehicle);
-        } catch (ParkingLotException e) {
-            boolean isFull = owner.isLotFull();
-            Assertions.assertTrue(isFull);
-        }
+    void givenWhenParkingLotIsFull_ShouldInformTheOwner() throws ParkingLotException {
+        parkingLotSystem.park(vehicle);
+        boolean isFull = owner.isLotFull();
+        Assertions.assertTrue(isFull);
+    }
+
+    @Test
+    void givenWhenParkingLotIsFullWhenCapacityIs2_ShouldInformTheOwner() throws ParkingLotException {
+        Object vehicle2 = new Object();
+        parkingLotSystem.setCapacity(2);
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.park(vehicle2);
+        boolean isFull = owner.isLotFull();
+        Assertions.assertTrue(isFull);
     }
 
     @Test
     void givenWhenParkingLotIsNotFull_ShouldInformOwner() {
-        ParkingLotOwner owner = new ParkingLotOwner();
-        parkingLotSystem.registerOwner(owner);
         boolean isFull = owner.isLotFull();
         Assertions.assertFalse(isFull);
+    }
+
+    @Test
+    void givenCapacityIs2_ShouldAbleToPark2Vehicle() throws ParkingLotException {
+        Object vehicle2 = new Object();
+        parkingLotSystem.setCapacity(2);
+        parkingLotSystem.park(vehicle);
+        parkingLotSystem.park(vehicle2);
+        boolean isParked1 = parkingLotSystem.isVehicleParked(vehicle);
+        boolean isParked2 = parkingLotSystem.isVehicleParked(vehicle2);
+        Assertions.assertTrue(isParked1 && isParked2);
     }
 }
